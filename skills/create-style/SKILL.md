@@ -31,20 +31,24 @@ a key in this order:
 
 1. `OPENSTORY_API_KEY` in the environment.
 2. `~/.config/openstory/credentials` — a line `OPENSTORY_API_KEY=<key>`.
-3. If the root `_links` has `device-authorize`, log in with it:
-   follow the link (`POST`, empty JSON body). Show the user
-   `verification_url` and `user_code` (open `verification_url_complete`
-   if present) and tell them to approve it in the browser. Then `GET`
-   `_links.poll` with `?wait=60s` until it returns `api_key`
-   (`authorization_pending` means keep polling; `expired_token` or
-   `access_denied` means stop and tell the user). Write the key to
-   `~/.config/openstory/credentials` (mode 600) and continue.
-4. Otherwise stop. Tell the user to create a key under
-   **Settings → Developer** at the origin and export
-   `OPENSTORY_API_KEY`. Do not open the dashboard unless they ask.
+3. If the root `_links` has `device-authorize`, `POST` it (empty JSON
+   body). Reply in the chat with `user_code` and `verification_url` as
+   copyable plain text, plus the `verification_url_complete` link.
+   Opening a browser is extra, never a substitute. Never print
+   `device_code`. **Stop this turn.** Done when the reply contains the
+   code as visible text.
+4. On the next turn, `GET` `_links.poll` with `?wait=60s` until it
+   returns `api_key` (`authorization_pending` means keep polling;
+   `expired_token` or `access_denied` means stop and tell the user).
+   Write the key to `~/.config/openstory/credentials` (mode 600) and
+   continue.
+5. If there is no `device-authorize` link, stop. Tell the user to
+   create a key under **Settings → Developer** at the origin and
+   export `OPENSTORY_API_KEY`. Do not open the dashboard unless they
+   ask.
 
 Send `Authorization: Bearer <key>` (or `x-api-key`). A `401` means the
-key is bad or revoked — go back to step 3 (or 4) rather than retrying.
+key is bad or revoked — go back to step 3 (or 5) rather than retrying.
 
 Keys are team-scoped. `429` includes `Retry-After` — honor it. Errors are
 always `{ "error": { "code", "message", "details"? } }`.
@@ -115,7 +119,13 @@ There is no update/delete on v1. A tweak is a new style.
 
 ## Report
 
-Return `name`, `id`, and a one-line look summary. To use it on a
-sequence, pass `style: "<name>"` (the `create-sequence` skill). Follow
-`_links.create-sequence` on the style document only if they asked for a
-video next.
+Return `name`, `id`, a one-line look summary, and a compose URL:
+
+`{origin}/?style=<slug>&prefill=style#compose`
+
+Slug the `name`: lowercase, spaces to hyphens. Use a `slug` field on
+the created document when the API sends one.
+
+To generate via the API, pass `style: "<name>"` (the `create-sequence`
+skill). Follow `_links.create-sequence` on the style document only if
+they asked for a video next.
