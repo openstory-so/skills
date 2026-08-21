@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "openstory",
+  "owner": {
+    "name": "OpenStory",
+    "url": "https://openstory.so"
+  },
+  "plugins": [
+    {
+      "name": "openstory",
+      "description": "Mint a library style from refs (create-style) and turn a script into a multi-scene AI video (create-sequence).",
+      "source": "./"
+    }
+  ]
+}

@@ -8,6 +8,20 @@ video (`create-sequence`).
 npx skills add openstory-so/skills
 ```
 
+Grok:
+
+```bash
+grok plugin marketplace add openstory-so/skills
+grok plugin install openstory --trust
+```
+
+Claude Code:
+
+```
+/plugin marketplace add openstory-so/skills
+/plugin install openstory@openstory
+```
+
 The API is the source of truth. Discover it with `GET https://openstory.so/api/v1`
 (instructions, request schema, HAL links) or `GET https://openstory.so/api/v1/openapi.json`.
 
