@@ -1,15 +1,17 @@
 ---
-name: openstory
+name: create-sequence
 description: >
-  Create multi-scene AI videos with OpenStory's public HTTP API — turn a
-  script or brief into a sequence, enhance a script, poll generation, and
-  export a stitched MP4. Use when asked to make, generate, or produce a
-  video or OpenStory sequence from a script or idea; to enhance or expand
-  an OpenStory script; to check OpenStory generation status; or to
-  export/download an OpenStory MP4. Not for editing the OpenStory codebase.
+  Create a multi-scene AI video sequence via OpenStory's public HTTP API
+  — turn a script or brief into a sequence, enhance a script, poll
+  generation, and export a stitched MP4. Use when asked to make,
+  generate, or produce a video or sequence from a script or idea; to
+  enhance or expand an OpenStory script; to check generation status; to
+  export/download an MP4; or when the user runs /create-sequence. Not
+  for creating a library style (that's create-style) and not for editing
+  the OpenStory codebase.
 ---
 
-# OpenStory
+# Create sequence
 
 Public API at `https://openstory.so`. Override the origin only when the user
 gives a self-hosted base URL.
@@ -24,13 +26,29 @@ unclear, re-read `requestSchema` or `GET {origin}/api/v1/openapi.json`.
 
 ## Auth
 
-Required on every call except the root.
+Required on every call except the root and the device-login pair. Resolve
+a key in this order:
 
-1. Read `OPENSTORY_API_KEY` from the environment.
-2. If it is missing, stop. Tell the user to create a key under
-   **Settings → Developer** at the origin and export
-   `OPENSTORY_API_KEY`. Do not open the dashboard unless they ask.
-3. Send `Authorization: Bearer $OPENSTORY_API_KEY` (or `x-api-key`).
+1. `OPENSTORY_API_KEY` in the environment.
+2. `~/.config/openstory/credentials` — a line `OPENSTORY_API_KEY=<key>`.
+3. If the root `_links` has `device-authorize`, `POST` it (empty JSON
+   body). Reply in the chat with `user_code` and `verification_url` as
+   copyable plain text, plus the `verification_url_complete` link.
+   Opening a browser is extra, never a substitute. Never print
+   `device_code`. **Stop this turn.** Done when the reply contains the
+   code as visible text.
+4. On the next turn, `GET` `_links.poll` with `?wait=60s` until it
+   returns `api_key` (`authorization_pending` means keep polling;
+   `expired_token` or `access_denied` means stop and tell the user).
+   Write the key to `~/.config/openstory/credentials` (mode 600) and
+   continue.
+5. If there is no `device-authorize` link, stop. Tell the user to
+   create a key under **Settings → Developer** at the origin and
+   export `OPENSTORY_API_KEY`. Do not open the dashboard unless they
+   ask.
+
+Send `Authorization: Bearer <key>` (or `x-api-key`). A `401` means the
+key is bad or revoked — go back to step 3 (or 5) rather than retrying.
 
 Keys are team-scoped. `429` includes `Retry-After` — honor it. Errors are
 always `{ "error": { "code", "message", "details"? } }`.
@@ -43,8 +61,9 @@ otherwise, send `motion: true`, `music: true`, `enhance: "auto"`. Set
 `music: true` requires `motion: true`.
 
 Pass style, cast, and locations as **names** or inline `{ name, ... }`
-objects. Never invent ids. Omit `style` to let the API pick. Do not send
-person `referenceImageUrls` unless the user provided images and the live
+objects. Never invent ids. Omit `style` to let the API pick. Mint a new
+library style from refs with `create-style`. Do not send person
+`referenceImageUrls` unless the user provided images and the live
 schema's portrait-attestation fields.
 
 `POST` the `_links.create-sequence` href with a JSON body. Expect `202`.

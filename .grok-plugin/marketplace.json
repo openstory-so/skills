@@ -1,0 +1,16 @@
+{
+  "name": "openstory",
+  "description": "OpenStory agent skills: mint a library style from refs, then turn a script into a multi-scene AI video.",
+  "owner": {
+    "name": "OpenStory",
+    "url": "https://openstory.so"
+  },
+  "plugins": [
+    {
+      "name": "openstory",
+      "description": "Mint a library style from refs (create-style) and turn a script into a multi-scene AI video (create-sequence).",
+      "homepage": "https://openstory.so",
+      "source": { "type": "local", "path": "./" }
+    }
+  ]
+}

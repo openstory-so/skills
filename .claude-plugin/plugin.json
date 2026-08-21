@@ -1,0 +1,13 @@
+{
+  "name": "openstory",
+  "version": "1.0.0",
+  "description": "Mint a library style from refs (create-style) and turn a script into a multi-scene AI video (create-sequence).",
+  "author": {
+    "name": "OpenStory",
+    "url": "https://openstory.so"
+  },
+  "homepage": "https://openstory.so",
+  "repository": "https://github.com/openstory-so/skills",
+  "license": "MIT",
+  "keywords": ["openstory", "video", "style", "sequence"]
+}
