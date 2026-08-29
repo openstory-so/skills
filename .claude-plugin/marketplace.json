@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "openstory",
-      "description": "Mint a library style from refs (create-style) and turn a script into a multi-scene AI video (create-sequence).",
+      "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), and stitch the clips into one MP4 (stitch).",
       "source": "./"
     }
   ]
