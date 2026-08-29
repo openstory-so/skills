@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stitch</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        font:
+          14px/1.5 ui-monospace,
+          'SF Mono',
+          Menlo,
+          monospace;
+        background: #0b0d10;
+        color: #d6dae0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+      main {
+        width: 100%;
+        max-width: 760px;
+      }
+      h1 {
+        font-size: 18px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #8ab4f8;
+      }
+      h1 span {
+        color: #4a5260;
+      }
+      ol {
+        margin: 18px 0;
+        padding-left: 28px;
+        color: #9aa3af;
+      }
+      ol li.done {
+        color: #7ee2a8;
+      }
+      ol li.active {
+        color: #f0f3f7;
+      }
+      .music {
+        color: #c7a6f2;
+        margin-bottom: 18px;
+      }
+      .bar {
+        height: 6px;
+        background: #1a1f26;
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 6px 0 18px;
+      }
+      .bar div {
+        height: 100%;
+        width: 0%;
+        background: #8ab4f8;
+        transition: width 0.2s;
+      }
+      #status {
+        min-height: 24px;
+        color: #f0f3f7;
+      }
+      #status.error {
+        color: #f28b82;
+        white-space: pre-wrap;
+      }
+      #status.ok {
+        color: #7ee2a8;
+      }
+      video {
+        width: 100%;
+        margin-top: 20px;
+        border-radius: 8px;
+        background: #000;
+        display: none;
+      }
+      a#download {
+        display: none;
+        margin-top: 12px;
+        color: #8ab4f8;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Stitch <span>/ webcodecs</span></h1>
+      <ol id="clips"></ol>
+      <div class="music" id="music"></div>
+      <div class="bar"><div id="progress"></div></div>
+      <div id="status">Loading…</div>
+      <video id="preview" controls></video>
+      <a id="download">download</a>
+    </main>
+    <script type="module">
+      const manifest = '__MANIFEST__'
+
+      const statusEl = document.getElementById('status')
+      const progressEl = document.getElementById('progress')
+      const clipsEl = document.getElementById('clips')
+      const musicEl = document.getElementById('music')
+
+      const clipItems = manifest.videos.map((v) => {
+        const li = document.createElement('li')
+        li.textContent = v.name
+        clipsEl.append(li)
+        return li
+      })
+      if (manifest.music) musicEl.textContent = `♪ ${manifest.music.name}`
+
+      function setStatus(text, cls = '') {
+        statusEl.textContent = text
+        statusEl.className = cls
+      }
+
+      async function serverLog(message) {
+        try {
+          await fetch('/log', { method: 'POST', body: message })
+        } catch {
+          /* server may already be gone */
+        }
+      }
+
+      function setProgress(fraction) {
+        progressEl.style.width = `${Math.min(100, Math.round(fraction * 100))}%`
+      }
+
+      // Served from local node_modules when available, jsdelivr otherwise.
+      let mediabunny
+      try {
+        mediabunny = await import(manifest.bundleUrl)
+      } catch (err) {
+        setStatus(`Failed to load mediabunny from ${manifest.bundleUrl}: ${err}`, 'error')
+        await serverLog(`ERROR failed to load mediabunny from ${manifest.bundleUrl}: ${err}`)
+        throw err
+      }
+      const {
+        ALL_FORMATS,
+        AudioBufferSink,
+        AudioBufferSource,
+        AudioSampleSink,
+        AudioSampleSource,
+        BufferSource,
+        BufferTarget,
+        Input,
+        Mp4OutputFormat,
+        Output,
+        QUALITY_HIGH,
+        QUALITY_MEDIUM,
+        VideoSampleSink,
+        VideoSampleSource,
+        canEncodeVideo,
+      } = mediabunny
+
+      async function loadInput(url, name) {
+        const response = await fetch(url)
+        if (!response.ok) throw new Error(`failed to fetch ${name}: ${response.status}`)
+        const buffer = await response.arrayBuffer()
+        return new Input({ source: new BufferSource(buffer), formats: ALL_FORMATS })
+      }
+
+      async function pickVideoCodec(width, height) {
+        for (const codec of ['avc', 'hevc', 'vp9', 'av1']) {
+          if (await canEncodeVideo(codec, { width, height })) return codec
+        }
+        throw new Error('no supported MP4 video codec can be encoded in this browser')
+      }
+
+      async function run() {
+        if (!('VideoEncoder' in window)) {
+          throw new Error('WebCodecs is not supported in this browser — use Chrome or Edge')
+        }
+
+        // Load and probe every clip.
+        const clips = []
+        for (const [i, video] of manifest.videos.entries()) {
+          clipItems[i].className = 'active'
+          setStatus(`Loading ${video.name}…`)
+          const input = await loadInput(video.url, video.name)
+          const track = await input.getPrimaryVideoTrack()
+          if (!track) throw new Error(`${video.name} has no video track`)
+          const audioTrack = await input.getPrimaryAudioTrack()
+          clips.push({
+            name: video.name,
+            track,
+            audioTrack,
+            firstTimestamp: await track.getFirstTimestamp(),
+            duration: await track.computeDuration(),
+          })
+          clipItems[i].className = ''
+          setProgress(((i + 1) / (manifest.videos.length + 1)) * 0.1)
+        }
+        const totalDuration = clips.reduce((sum, c) => sum + c.duration, 0)
+
+        // Output: one MP4, video re-encoded back-to-back. Audio modes:
+        //   'mix'     — clips' audio and the music rendered together offline
+        //               (also used for solo music at a non-default gain)
+        //   'replace' — music only, streamed straight through
+        //   'clips'   — the clips' own audio, normalized to one format
+        const first = clips[0]
+        const codec = await pickVideoCodec(first.track.displayWidth, first.track.displayHeight)
+        const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() })
+        const videoSource = new VideoSampleSource({
+          codec,
+          bitrate: QUALITY_HIGH,
+          sizeChangeBehavior: 'contain',
+        })
+        output.addVideoTrack(videoSource)
+
+        let musicTrack = null
+        if (manifest.music) {
+          setStatus(`Loading ${manifest.music.name}…`)
+          const musicInput = await loadInput(manifest.music.url, manifest.music.name)
+          musicTrack = await musicInput.getPrimaryAudioTrack()
+          if (!musicTrack) throw new Error(`${manifest.music.name} has no audio track`)
+        }
+        const clipsHaveAudio = clips.some((c) => c.audioTrack)
+        const audioMode = musicTrack
+          ? manifest.mix || manifest.musicGain !== 1
+            ? 'mix'
+            : 'replace'
+          : clipsHaveAudio
+            ? 'clips'
+            : 'none'
+
+        let audioSource = null
+        let mixSource = null
+        if (audioMode === 'mix') {
+          mixSource = new AudioBufferSource({ codec: 'aac', bitrate: QUALITY_MEDIUM })
+          output.addAudioTrack(mixSource)
+        } else if (audioMode !== 'none') {
+          audioSource = new AudioSampleSource({
+            codec: 'aac',
+            bitrate: QUALITY_MEDIUM,
+            transform: { sampleRate: 48000, numberOfChannels: 2 },
+          })
+          output.addAudioTrack(audioSource)
+        }
+
+        await output.start()
+
+        // Re-encode every clip, shifted onto one continuous timeline.
+        let offset = 0
+        for (const [i, clip] of clips.entries()) {
+          clipItems[i].className = 'active'
+          setStatus(`Stitching ${clip.name}…`)
+          const sink = new VideoSampleSink(clip.track)
+          let firstOfClip = true
+          for await (const sample of sink.samples()) {
+            sample.setTimestamp(offset + sample.timestamp - clip.firstTimestamp)
+            await videoSource.add(sample, firstOfClip ? { keyFrame: true } : undefined)
+            firstOfClip = false
+            setProgress(
+              0.1 + 0.85 * ((offset + sample.timestamp - clip.firstTimestamp) / totalDuration),
+            )
+            sample.close()
+          }
+          if (audioMode === 'clips' && audioSource && clip.audioTrack) {
+            const audioSink = new AudioSampleSink(clip.audioTrack)
+            const audioFirst = await clip.audioTrack.getFirstTimestamp()
+            for await (const sample of audioSink.samples(audioFirst, audioFirst + clip.duration)) {
+              sample.setTimestamp(Math.max(0, offset + sample.timestamp - audioFirst))
+              await audioSource.add(sample)
+              sample.close()
+            }
+          }
+          offset += clip.duration
+          clipItems[i].className = 'done'
+        }
+
+        // Music (replace mode): lay the track under the whole timeline,
+        // looping if it runs short.
+        if (audioMode === 'replace' && musicTrack && audioSource) {
+          setStatus('Adding music…')
+          const musicDuration = await musicTrack.computeDuration()
+          if (musicDuration <= 0) throw new Error('music track has zero duration')
+          let musicOffset = 0
+          while (musicOffset < totalDuration) {
+            const remaining = totalDuration - musicOffset
+            const sink = new AudioSampleSink(musicTrack)
+            for await (const sample of sink.samples(0, Math.min(musicDuration, remaining))) {
+              sample.setTimestamp(musicOffset + sample.timestamp)
+              await audioSource.add(sample)
+              sample.close()
+            }
+            musicOffset += Math.min(musicDuration, remaining)
+            if (musicDuration >= remaining) break
+          }
+        }
+
+        // Mix mode: render the clips' own audio and the music (under a gain)
+        // onto one offline timeline, then encode the single rendered buffer.
+        if (audioMode === 'mix' && musicTrack && mixSource) {
+          setStatus('Mixing audio…')
+          const ctx = new OfflineAudioContext(2, Math.ceil(totalDuration * 48000), 48000)
+
+          if (manifest.mix) {
+            let clipOffset = 0
+            for (const clip of clips) {
+              if (clip.audioTrack) {
+                const audioFirst = await clip.audioTrack.getFirstTimestamp()
+                const sink = new AudioBufferSink(clip.audioTrack)
+                for await (const { buffer, timestamp } of sink.buffers(
+                  audioFirst,
+                  audioFirst + clip.duration,
+                )) {
+                  const node = ctx.createBufferSource()
+                  node.buffer = buffer
+                  node.connect(ctx.destination)
+                  node.start(Math.max(0, clipOffset + timestamp - audioFirst))
+                }
+              }
+              clipOffset += clip.duration
+            }
+          }
+
+          const musicGainNode = ctx.createGain()
+          musicGainNode.gain.value = manifest.musicGain
+          musicGainNode.connect(ctx.destination)
+          const musicDuration = await musicTrack.computeDuration()
+          if (musicDuration <= 0) throw new Error('music track has zero duration')
+          let musicOffset = 0
+          while (musicOffset < totalDuration) {
+            const span = Math.min(musicDuration, totalDuration - musicOffset)
+            const sink = new AudioBufferSink(musicTrack)
+            for await (const { buffer, timestamp } of sink.buffers(0, span)) {
+              const node = ctx.createBufferSource()
+              node.buffer = buffer
+              node.connect(musicGainNode)
+              node.start(Math.max(0, musicOffset + timestamp))
+            }
+            musicOffset += span
+          }
+
+          const rendered = await ctx.startRendering()
+          await mixSource.add(rendered)
+        }
+
+        setStatus('Finalizing MP4…')
+        setProgress(0.97)
+        await output.finalize()
+
+        const blob = new Blob([output.target.buffer], { type: 'video/mp4' })
+        const objectUrl = URL.createObjectURL(blob)
+        const preview = document.getElementById('preview')
+        preview.src = objectUrl
+        preview.style.display = 'block'
+        const download = document.getElementById('download')
+        download.href = objectUrl
+        download.download = manifest.outName
+        download.textContent = `download ${manifest.outName}`
+        download.style.display = 'inline-block'
+
+        setStatus('Saving…')
+        const saveResponse = await fetch('/save', { method: 'POST', body: blob })
+        setProgress(1)
+        if (saveResponse.ok) {
+          const { savedTo } = await saveResponse.json()
+          setStatus(`Saved to ${savedTo} (${(blob.size / 1e6).toFixed(1)} MB)`, 'ok')
+        } else {
+          setStatus(
+            `Stitched (${(blob.size / 1e6).toFixed(1)} MB) — server save failed, use the download link`,
+            'error',
+          )
+        }
+      }
+
+      run().catch(async (err) => {
+        const message = err instanceof Error ? (err.stack ?? err.message) : String(err)
+        setStatus(message, 'error')
+        await serverLog(`ERROR ${message}`)
+      })
+    </script>
+  </body>
+</html>
