@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "openstory": {
+      "type": "http",
+      "url": "https://openstory.so/mcp"
+    }
+  }
+}

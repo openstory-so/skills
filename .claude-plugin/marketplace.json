@@ -1,6 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "openstory",
+  "description": "OpenStory agent skills and the hosted MCP server.",
   "owner": {
     "name": "OpenStory",
     "url": "https://openstory.so"
@@ -8,7 +9,7 @@
   "plugins": [
     {
       "name": "openstory",
-      "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), and stitch the clips into one MP4 (stitch).",
+      "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), stitch the clips into one MP4 (stitch), and connect the OpenStory MCP server.",
       "source": "./"
     }
   ]

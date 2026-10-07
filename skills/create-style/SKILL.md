@@ -15,6 +15,15 @@ Mint a team-owned OpenStory library style from whatever the user handed
 you. Public API at `https://openstory.so`. Override the origin only when
 the user gives a self-hosted base URL.
 
+## MCP first
+
+The OpenStory plugin (Claude Code, Codex, and Grok) connects `https://openstory.so/mcp`. When this session
+has OpenStory MCP tools, call those. They authenticate with the client's
+OAuth grant (or a Bearer `osk_` key the client already attached). Use the
+HTTP API below only when those tools are absent, or the user gave a
+self-hosted origin. Do not start a device-code login while MCP tools are
+available.
+
 ## Discover first
 
 `GET {origin}/api/v1` (unauthenticated). The body is the contract:

@@ -1,0 +1,29 @@
+{
+  "name": "openstory",
+  "version": "1.2.0",
+  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), stitch the clips into one MP4 (stitch), and connect the OpenStory MCP server.",
+  "author": {
+    "name": "OpenStory",
+    "url": "https://openstory.so"
+  },
+  "homepage": "https://openstory.so",
+  "repository": "https://github.com/openstory-so/skills",
+  "license": "MIT",
+  "keywords": ["openstory", "video", "style", "sequence", "stitch", "mcp"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "OpenStory",
+    "shortDescription": "AI video skills plus the OpenStory MCP server",
+    "longDescription": "Mint a library style from refs, turn a script into a multi-scene AI video, and stitch the clips into one MP4. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp.",
+    "developerName": "OpenStory",
+    "category": "Creativity",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://openstory.so",
+    "defaultPrompt": [
+      "Turn this script into an OpenStory video sequence",
+      "Mint an OpenStory style from these reference images"
+    ],
+    "brandColor": "#111111"
+  }
+}

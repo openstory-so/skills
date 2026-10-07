@@ -1,0 +1,23 @@
+{
+  "name": "openstory",
+  "interface": {
+    "displayName": "OpenStory"
+  },
+  "plugins": [
+    {
+      "name": "openstory",
+      "interface": {
+        "displayName": "OpenStory"
+      },
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Creativity"
+    }
+  ]
+}

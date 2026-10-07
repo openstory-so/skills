@@ -1,7 +1,7 @@
 {
   "name": "openstory",
-  "version": "1.1.0",
-  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), and stitch the clips into one MP4 (stitch).",
+  "version": "1.2.0",
+  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), stitch the clips into one MP4 (stitch), and connect the OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
     "url": "https://openstory.so"
