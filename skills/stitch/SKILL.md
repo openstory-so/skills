@@ -1,84 +1,44 @@
 ---
 name: stitch
-description: >
-  Stitch a list of video clips into one MP4 — optionally adding a music track,
-  either replacing the clips' audio or mixed underneath it — using a local
-  WebCodecs page. Use whenever the user asks to "stitch these videos",
-  "join/combine/concatenate clips", "assemble the takes into one video", "add
-  music under the cut", "mix music with the audio", "keep the dialogue and add
-  music", or wants a single deliverable MP4 from several generated shots. Runs
-  entirely locally: a tiny server opens a stitcher page in the browser, the
-  page decodes and re-encodes with WebCodecs, and the result is saved back to
-  disk.
+description: Play local stills, dialogue, music, and video as one sequence in the browser with the stitch command. Use when the user runs /stitch, or asks to stitch, preview, or play a cut from local image, audio, and video files.
+user-invocable: true
+argument-hint: '[--music file] [--subs file.srt] <image-or-video> [--poster file] [--fallback file] [--audio file] [--seconds n] [--cue start-end text]...'
+metadata:
+  opencode/slash: 'true'
 ---
 
-# stitch workflow
+# stitch
 
-The CLI lives in `scripts/stitch.ts` **next to this SKILL.md** — run it from
-the skill directory with plain node (Node 22+). It starts a local HTTP
-server, opens a stitcher page in the default browser, and blocks until the
-page has produced the final MP4 and POSTed it back. The page decodes every
-clip with WebCodecs (via mediabunny), re-encodes them back-to-back onto one
-timeline, and writes a single `h264 + aac` MP4.
+`/stitch` runs the `stitch` command and leaves it running. The page it opens is the player.
 
-```bash
-node <this-skill-dir>/scripts/stitch.ts <video1> <video2> [...] \
-  [--music <audio-file>] \
-  [--mix]                   # mix music WITH the clips' audio (default: replace)
-  [--music-gain <0..1>]     # music level; defaults to 0.5 with --mix, 1 otherwise
-  [--out <file.mp4>]        # default ./stitched.mp4 (written atomically)
-  [--port <n>]              # default: random free port
-  [--no-open]               # don't open the browser (you navigate yourself)
-  [--stay]                  # keep serving after save (default: exit on save)
+## Command
+
+From the directory that holds the files, or with paths that reach them:
+
+```sh
+npx @openstory/stitch \
+  --music score.mp3 --music-gain -3 \
+  --subs lines.srt \
+  shot.mp4 --poster board.png --cue 0-1.5 "Love that accent." \
+  board.png --audio line.wav --seconds 3 --cue 0-2 "Coming over?"
 ```
 
-mediabunny is served from local `node_modules` when installed; otherwise the
-page loads it from the jsdelivr CDN, so the skill works standalone.
+1. Put the stills and videos in play order.
+2. A `.mp4`, `.webm`, or `.mov` is a video. Its dialogue is the audio inside the file. Do not pass `--audio` for a video.
+3. A `.png`, `.jpg`, `.jpeg`, or `.webp` is a still. The command reads its width and height.
+4. `--audio` adds a line to the still before it. Repeat it for another line. The still stays up for the longer of `--seconds` and that sound. `--seconds` defaults to 4.
+5. `--cue START-END TEXT` is a subtitle on the clip before it. Quote the text. Times are seconds from the start of that clip.
+6. `--subs lines.srt` (or `.vtt`) is one subtitle file for the whole cut. Times in the file are from the start of the first clip. A cue that crosses a cut is split onto both clips. Use this instead of one `--cue` per line when a file already exists.
+7. `--poster` is the still shown while the cut opens. It belongs on an opening video. `--fallback` is the picture tried when the still before it fails to load.
+8. `--music` is the bed under the whole cut. `--music-gain` changes only that bed, in dB. It defaults to 0. The page can turn that bed off; dialogue stays.
+9. Run that `npx` command and give the user the `http://127.0.0.1:` URL it prints. Leave the process running until they are done. `--no-open` skips opening a browser.
 
-Clip order = argument order. Accepted video inputs: mp4/m4v/mov/webm/mkv.
-Music: mp3/m4a/aac/wav/ogg/flac (also mp4/webm audio).
+## Installing this command
 
-## Behavior
+Prefer the OpenStory plugin, which includes this skill plus `create-style` and `create-sequence`: `npx skills add openstory-so/skills`. Grok, Claude Code, Codex, and the ChatGPT desktop app install that repo as a marketplace plugin named OpenStory. If `/stitch` is missing, tell the user to install the plugin.
 
-- **Video**: each clip is fully re-encoded (h264 preferred, falls back to
-  hevc/vp9/av1 by encoder support). Mixed resolutions are letterboxed into
-  the first clip's frame size (`contain`). Each clip boundary starts on a
-  keyframe.
-- **Audio**: with `--music` alone, the music track replaces all clip audio
-  and is laid under the full cut, looping if shorter and trimmed to the
-  video length. Add `--mix` to keep the clips' own audio and blend the
-  music underneath it (Web Audio offline render; music ducked to 0.5 by
-  default, tune with `--music-gain`). Without `--music`, the clips' own
-  audio is carried through (normalized to 48 kHz stereo AAC); if no clip
-  has audio the output is video-only.
-- **Choosing replace vs mix**: if the clips carry audio worth keeping
-  (dialogue, generated sound effects, ambience) and the user wants music
-  too, use `--music … --mix`. Use `--music` alone when the clips are
-  silent or the user explicitly wants their audio replaced. When the user
-  says the music is too loud/quiet in a mix, re-run with a different
-  `--music-gain` (0.3 quiet bed → 0.7 prominent).
-- Requires a WebCodecs browser (Chrome/Edge). The whole pipeline is local —
-  nothing is uploaded.
+`npx @openstory/stitch skill` copies this skill and the player contract into `.agents/skills/` and `.claude/skills/`. `--global` copies both trees into the home directory.
 
-## Driving it as an agent
+## Embedding the player
 
-Run it in the background and watch stdout — every line is JSON:
-
-1. First line: `{"url": "http://127.0.0.1:<port>/", "videos": n, "music": ..., "out": ...}`.
-   The browser opens automatically (unless `--no-open`) and stitching starts
-   with no user interaction.
-2. Page-side logs/errors are proxied back as `{"page": "..."}` lines — check
-   these if nothing gets saved (e.g. a clip with no video track, or an
-   unsupported codec).
-3. Success line: `{"saved": "<abs path>", "bytes": n}` — then the process
-   exits by itself (unless `--stay`). Treat that line as completion; verify
-   with `ffprobe` if the result matters.
-
-A short clip list finishes in seconds; budget roughly real-time for longer
-cuts (decode + encode is faster than realtime on Apple Silicon).
-
-Typical hand-off from the create-sequence flow: the API's export already
-returns a stitched MP4, so reach for this skill when the cut needs local
-control — download the individual shot videos, pass them in scene order
-(reorder or drop shots as needed), add a music bed with `--music` (and
-`--mix` to keep the shots' own audio), and `--out <dir>/<name>.mp4`.
+Wiring `StitchedPlayer`, a `PlaybackClip` list, music, or an MP4 export is the `stitch-player` skill. Read that skill before writing a clip list.

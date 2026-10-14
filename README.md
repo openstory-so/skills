@@ -2,8 +2,8 @@
 
 Agent skills for [OpenStory](https://openstory.so) — mint a library
 style from refs (`create-style`), turn a script into a multi-scene AI
-video (`create-sequence`), and stitch the resulting clips into one MP4
-with an optional music bed (`stitch`).
+video (`create-sequence`), and play a local cut from clips, stills,
+and a music bed (`stitch`).
 
 ```bash
 npx skills add openstory-so/skills

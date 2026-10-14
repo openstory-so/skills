@@ -1,7 +1,7 @@
 {
   "name": "openstory",
   "version": "1.2.0",
-  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), stitch the clips into one MP4 (stitch), and connect the OpenStory MCP server.",
+  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a local cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
     "url": "https://openstory.so"
@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "OpenStory",
     "shortDescription": "AI video skills plus the OpenStory MCP server",
-    "longDescription": "Mint a library style from refs, turn a script into a multi-scene AI video, and stitch the clips into one MP4. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp.",
+    "longDescription": "Mint a library style from refs, turn a script into a multi-scene AI video, and play a local cut from clips, stills, and a music bed. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp.",
     "developerName": "OpenStory",
     "category": "Creativity",
     "capabilities": ["Interactive", "Write"],
