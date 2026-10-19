@@ -1,15 +1,15 @@
 # OpenStory skills
 
 Agent skills for [OpenStory](https://openstory.so) — mint a library
-style from refs (`create-style`) and turn a script into a multi-scene AI
-video (`create-sequence`). Claude Code also plays a local cut (`stitch`).
+style from refs (`create-style`), turn a script into a multi-scene AI
+video (`create-sequence`), and play a cut from clips, stills, and a
+music bed (`stitch`).
 
 ```bash
 npx skills add openstory-so/skills
 ```
 
-That copies `create-style` and `create-sequence`. It does not connect MCP
-and it does not install `stitch`.
+That copies the skill files. It does not connect the MCP server.
 
 ## Directory installs
 
@@ -24,10 +24,7 @@ client asks. That grant is separate from an API key.
 | Grok | The xAI plugin marketplace, or the commands below. |
 | Gemini CLI | `gemini extensions install https://github.com/openstory-so/skills` after the repo is tagged and carries the `gemini-cli-extension` topic. |
 
-`stitch` needs a local machine, so it lives in `cli-skills/`, not `skills/`.
-Claude Code adds that directory from its manifest. Gemini CLI reaches it
-through `GEMINI.md`. A Grok install that reads the root `plugin.json` only
-scans `skills/`. Install that skill with `npx @openstory/stitch skill`.
+`stitch` ships with the other skills. When the files are on disk and a shell is available, it runs `npx @openstory/stitch@latest`. With no shell, or when the files are only links, it calls `openstory.create_stitch` and returns a page anyone can open.
 
 ## Command-line installs
 

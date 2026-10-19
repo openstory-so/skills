@@ -17,7 +17,7 @@
       "interface": {
         "displayName": "OpenStory",
         "shortDescription": "Scripts in, multi-scene AI video out",
-        "longDescription": "OpenStory turns a script into a multi-scene video and mints a reusable library style from references. The plugin connects to the hosted MCP server at https://openstory.so/mcp and reads or writes only what the signed-in team can access. Sign-in is OAuth. This package does not run local file playback.",
+        "longDescription": "OpenStory turns a script into a multi-scene video, mints a reusable library style from references, and shares a cut of stills, dialogue, music, and video. The plugin connects to the hosted MCP server at https://openstory.so/mcp and reads or writes only what the signed-in team can access. Sign-in is OAuth. On a machine with a shell, stitch plays local files. Without one, openstory.create_stitch publishes a page from URLs or small inline files.",
         "developerName": "OpenStory",
         "category": "Creativity",
         "capabilities": ["Create a sequence", "Read your library"],
@@ -90,7 +90,7 @@
         "commerce_description": "This plugin does not sell products or process payments."
       },
       "publication": {
-        "release_notes": "1.3.0 lists OpenStory in the agent directories. ChatGPT and Codex get create-style, create-sequence, and setup. Local playback (stitch) stays on Claude Code."
+        "release_notes": "1.3.0 lists OpenStory in the agent directories. ChatGPT, Codex, Claude, Grok, and Gemini get create-style, create-sequence, setup, and stitch. On the web, stitch calls openstory.create_stitch. On a machine with the files, it runs the stitch command."
       }
     }
   }

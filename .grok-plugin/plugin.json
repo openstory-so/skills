@@ -1,7 +1,7 @@
 {
   "name": "openstory",
   "version": "1.3.0",
-  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), and connect the OpenStory MCP server. Local playback (stitch) is declared under cli-skills/.",
+  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
     "url": "https://openstory.so"
@@ -9,6 +9,5 @@
   "homepage": "https://openstory.so",
   "repository": "https://github.com/openstory-so/skills",
   "license": "MIT",
-  "keywords": ["openstory", "video", "style", "sequence", "stitch"],
-  "skills": ["./cli-skills/"]
+  "keywords": ["openstory", "video", "style", "sequence", "stitch"]
 }

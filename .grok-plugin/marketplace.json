@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "openstory",
-      "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), and connect the OpenStory MCP server.",
+      "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
       "homepage": "https://openstory.so",
       "source": { "type": "local", "path": "./" }
     }
