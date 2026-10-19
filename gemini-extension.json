@@ -1,0 +1,11 @@
+{
+  "name": "openstory",
+  "version": "1.3.0",
+  "description": "Turn a script into a multi-scene AI video and mint a library style. Connects the hosted OpenStory MCP server.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "openstory": {
+      "httpUrl": "https://openstory.so/mcp"
+    }
+  }
+}

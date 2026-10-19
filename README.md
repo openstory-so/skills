@@ -2,12 +2,31 @@
 
 Agent skills for [OpenStory](https://openstory.so) — mint a library
 style from refs (`create-style`), turn a script into a multi-scene AI
-video (`create-sequence`), and play a local cut from clips, stills,
-and a music bed (`stitch`).
+video (`create-sequence`), and play a cut from clips, stills, and a
+music bed (`stitch`).
 
 ```bash
 npx skills add openstory-so/skills
 ```
+
+That copies the skill files. It does not connect the MCP server.
+
+## Directory installs
+
+These are the one-click listings. Each one connects
+`https://openstory.so/mcp` (Streamable HTTP, OAuth). Sign in when the
+client asks. That grant is separate from an API key.
+
+| Agent | Install |
+| --- | --- |
+| ChatGPT and Codex | The public plugin directory, once the listing is approved. Package root is `plugin.json` plus `mcp.json`. |
+| Claude | [claude.ai/directory](https://claude.ai/directory) after submission, or the commands below. |
+| Grok | The xAI plugin marketplace, or the commands below. |
+| Gemini CLI | `gemini extensions install https://github.com/openstory-so/skills` after the repo is tagged and carries the `gemini-cli-extension` topic. |
+
+`stitch` ships with the other skills. When the files are on disk and a shell is available, it runs `npx @openstory/stitch@latest`. With no shell, or when the files are only links, it calls `openstory.create_stitch` and returns a page anyone can open.
+
+## Command-line installs
 
 Grok:
 
@@ -30,20 +49,8 @@ codex plugin marketplace add openstory-so/skills
 codex plugin add openstory@openstory
 ```
 
-ChatGPT desktop app:
-
-1. Open **Plugins** and choose **Add a marketplace**. This control is in the desktop app, not on chatgpt.com in a browser.
-2. Enter `openstory-so/skills`.
-3. Install **OpenStory**.
-
-That install includes `create-style`, `create-sequence`, and `stitch`. Because the plugin also ships the MCP server, ChatGPT marks it **Desktop only**: the skills run in the desktop app, not in the browser. Sign in to OpenStory when the app asks.
-
-Installing the plugin also connects the hosted MCP server at
-`https://openstory.so/mcp` (Streamable HTTP). Sign in when the client
-asks; that OAuth grant is separate from an API key. `POST /mcp` returns
-`401` with `WWW-Authenticate` pointing at the protected-resource
-metadata, which is how Claude Code, Codex, and Grok find the authorization
-server.
+ChatGPT can still install this repo as a GitHub marketplace. That path is
+desktop-only. The public directory listing is what runs on chatgpt.com.
 
 The HTTP API remains the source of truth for the skills when MCP tools
 are not connected. Discover it with `GET https://openstory.so/api/v1`
