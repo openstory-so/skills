@@ -17,7 +17,7 @@ the user gives a self-hosted base URL.
 
 ## MCP first
 
-The OpenStory plugin (Claude Code, Codex, and Grok) connects `https://openstory.so/mcp`. When this session
+The OpenStory plugin (ChatGPT, Codex, Claude, Grok, and Gemini CLI) connects `https://openstory.so/mcp`. When this session
 has OpenStory MCP tools, call those. They authenticate with the client's
 OAuth grant (or a Bearer `osk_` key the client already attached). Use the
 HTTP API below only when those tools are absent, or the user gave a

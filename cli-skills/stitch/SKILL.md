@@ -35,7 +35,7 @@ npx @openstory/stitch \
 
 ## Installing this command
 
-Prefer the OpenStory plugin, which includes this skill plus `create-style` and `create-sequence`: `npx skills add openstory-so/skills`. Grok, Claude Code, Codex, and the ChatGPT desktop app install that repo as a marketplace plugin named OpenStory. If `/stitch` is missing, tell the user to install the plugin.
+Claude Code loads this skill from the OpenStory plugin (`cli-skills/`). ChatGPT and Codex directory installs do not: this command needs a local machine. A Grok install that reads the root `plugin.json` only scans `skills/`. `npx skills add openstory-so/skills` installs `create-style` and `create-sequence` only.
 
 `npx @openstory/stitch skill` copies this skill and the player contract into `.agents/skills/` and `.claude/skills/`. `--global` copies both trees into the home directory.
 

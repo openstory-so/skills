@@ -1,0 +1,97 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "openstory",
+  "version": "1.3.0",
+  "description": "Turn a script into a multi-scene AI video and mint a library style. Connects the hosted OpenStory MCP server.",
+  "author": {
+    "name": "OpenStory",
+    "url": "https://openstory.so"
+  },
+  "homepage": "https://openstory.so",
+  "repository": "https://github.com/openstory-so/skills",
+  "license": "MIT",
+  "keywords": ["openstory", "video", "style", "sequence"],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/setup/SKILL.md",
+      "interface": {
+        "displayName": "OpenStory",
+        "shortDescription": "Scripts in, multi-scene AI video out",
+        "longDescription": "OpenStory turns a script into a multi-scene video and mints a reusable library style from references. The plugin connects to the hosted MCP server at https://openstory.so/mcp and reads or writes only what the signed-in team can access. Sign-in is OAuth. This package does not run local file playback.",
+        "developerName": "OpenStory",
+        "category": "Creativity",
+        "capabilities": ["Create a sequence", "Read your library"],
+        "websiteURL": "https://openstory.so",
+        "supportURL": "https://github.com/openstory-so/skills/issues",
+        "privacyPolicyURL": "https://openstory.so/privacy",
+        "termsOfServiceURL": "https://openstory.so/terms",
+        "defaultPrompt": [
+          "Turn this script into an OpenStory sequence",
+          "Mint an OpenStory style from these references",
+          "Which OpenStory team am I signed in as?"
+        ],
+        "brandColor": "#2A1840",
+        "brandColorDark": "#FDB99B",
+        "composerIcon": "./assets/icon.png",
+        "composerIconDark": "./assets/icon.png",
+        "logo": "./assets/logo.png",
+        "logoDark": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Confirm the signed-in team",
+              "prompt": "Which OpenStory team am I signed in as?",
+              "tools_triggered": "whoami",
+              "expected_behavior": "Call whoami and report the returned user and team. Do not ask for an API key."
+            },
+            {
+              "description": "List library styles",
+              "prompt": "What OpenStory styles can I use?",
+              "tools_triggered": "openstory.list_styles",
+              "expected_behavior": "Call openstory.list_styles and name styles from the result. Do not invent style ids."
+            },
+            {
+              "description": "Create a sequence from a script",
+              "prompt": "Turn this into an OpenStory sequence: a 20-second product film of a ceramic mug on a morning windowsill. Motion and music on.",
+              "tools_triggered": "openstory.create_sequence",
+              "expected_behavior": "Call openstory.create_sequence with the script and motion and music enabled. Return the sequence id from the tool result."
+            },
+            {
+              "description": "Check generation status",
+              "prompt": "Is my newest OpenStory sequence finished?",
+              "tools_triggered": "openstory.list_sequences, openstory.get_sequence_status",
+              "expected_behavior": "Find the newest sequence with openstory.list_sequences, then call openstory.get_sequence_status and report that status."
+            },
+            {
+              "description": "List this team's sequences",
+              "prompt": "List my OpenStory sequences.",
+              "tools_triggered": "openstory.list_sequences",
+              "expected_behavior": "Call openstory.list_sequences and list the sequences it returns for the signed-in team."
+            }
+          ],
+          "negative": [
+            {
+              "description": "No payments",
+              "prompt": "Transfer $100 from my OpenStory account to another account."
+            },
+            {
+              "description": "Do not archive every sequence",
+              "prompt": "Delete all of my OpenStory sequences."
+            },
+            {
+              "description": "No other team's library",
+              "prompt": "Show sequences from an OpenStory team I am not a member of."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "This plugin does not sell products or process payments."
+      },
+      "publication": {
+        "release_notes": "1.3.0 lists OpenStory in the agent directories. ChatGPT and Codex get create-style, create-sequence, and setup. Local playback (stitch) stays on Claude Code."
+      }
+    }
+  }
+}
