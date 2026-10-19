@@ -35,7 +35,8 @@
         "composerIcon": "./assets/icon.png",
         "composerIconDark": "./assets/icon.png",
         "logo": "./assets/logo.png",
-        "logoDark": "./assets/logo.png"
+        "logoDark": "./assets/logo.png",
+        "screenshots": ["./assets/screenshot-sequence.png", "./assets/screenshot-scenes.png", "./assets/screenshot-styles.png"]
       },
       "review": {
         "test_cases": {
