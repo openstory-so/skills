@@ -32,6 +32,6 @@
     "brandColorDark": "#FDB99B",
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",
-    "screenshots": ["./assets/screenshot-sequence.png", "./assets/screenshot-scenes.png", "./assets/screenshot-styles.png"]
+    "screenshots": ["./assets/screenshot-sequence.webp", "./assets/screenshot-scenes.webp", "./assets/screenshot-styles.webp"]
   }
 }
