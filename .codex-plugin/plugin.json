@@ -1,7 +1,7 @@
 {
   "name": "openstory",
   "version": "1.3.0",
-  "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
+  "description": "Generate AI images and video, mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
     "url": "https://openstory.so"
@@ -14,8 +14,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "OpenStory",
-    "shortDescription": "Scripts in, multi-scene AI video out",
-    "longDescription": "Mint a library style from refs, turn a script into a multi-scene AI video, and share a cut of clips, stills, and a music bed. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp. Sign-in is OAuth.",
+    "shortDescription": "AI images, video, and full sequences",
+    "longDescription": "Generate images and video clips directly from a prompt, reference images, or start and end frames. Mint a library style from refs, turn a script into a multi-scene AI video, and share a cut of clips, stills, and a music bed. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp. Sign-in is OAuth.",
     "developerName": "OpenStory",
     "category": "Creativity",
     "capabilities": ["Interactive", "Write"],
@@ -24,9 +24,9 @@
     "privacyPolicyURL": "https://openstory.so/privacy",
     "termsOfServiceURL": "https://openstory.so/terms",
     "defaultPrompt": [
+      "Generate a 5-second OpenStory video of a lighthouse at dusk",
       "Turn this script into an OpenStory sequence",
-      "Mint an OpenStory style from these references",
-      "Which OpenStory team am I signed in as?"
+      "Mint an OpenStory style from these references"
     ],
     "brandColor": "#2A1840",
     "brandColorDark": "#FDB99B",
