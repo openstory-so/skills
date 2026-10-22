@@ -26,7 +26,7 @@
         "privacyPolicyURL": "https://openstory.so/privacy",
         "termsOfServiceURL": "https://openstory.so/terms",
         "defaultPrompt": [
-          "Generate a 5-second OpenStory video of a lighthouse at dusk",
+          "Generate a 5-second OpenStory video from this image",
           "Turn this script into an OpenStory micro-drama",
           "Mint an OpenStory style from these references"
         ],
