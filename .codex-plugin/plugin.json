@@ -1,7 +1,7 @@
 {
   "name": "openstory",
   "version": "1.3.0",
-  "description": "Generate AI images and video, mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
+  "description": "Generate entire films, episodes, and micro-dramas from a script (create-sequence), or single images and video clips, mint a library style from refs (create-style), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
     "url": "https://openstory.so"
@@ -14,8 +14,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "OpenStory",
-    "shortDescription": "AI images, video, and full sequences",
-    "longDescription": "Generate images and video clips directly from a prompt, reference images, or start and end frames. Mint a library style from refs, turn a script into a multi-scene AI video, and share a cut of clips, stills, and a music bed. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp. Sign-in is OAuth.",
+    "shortDescription": "AI films, episodes, and micro-dramas",
+    "longDescription": "Turn a script into an entire film, episode, or micro-drama, with scenes, dialogue, and music. Generate single images and video clips directly from a prompt, reference images, or start and end frames. Mint a library style from refs and share a cut of clips, stills, and a music bed. Installing the plugin also connects the hosted OpenStory MCP server at https://openstory.so/mcp. Sign-in is OAuth.",
     "developerName": "OpenStory",
     "category": "Creativity",
     "capabilities": ["Interactive", "Write"],
@@ -25,7 +25,7 @@
     "termsOfServiceURL": "https://openstory.so/terms",
     "defaultPrompt": [
       "Generate a 5-second OpenStory video of a lighthouse at dusk",
-      "Turn this script into an OpenStory sequence",
+      "Turn this script into an OpenStory micro-drama",
       "Mint an OpenStory style from these references"
     ],
     "brandColor": "#2A1840",
