@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "openstory",
-  "version": "1.3.0",
-  "description": "Turn a script into a multi-scene AI video and mint a library style. Connects the hosted OpenStory MCP server.",
+  "version": "1.3.1",
+  "description": "Generate entire films, episodes, and micro-dramas from a script, or single images and video clips, and mint a library style. Connects the hosted OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
     "url": "https://openstory.so"
@@ -16,26 +16,27 @@
       "onboardingSkill": "./skills/setup/SKILL.md",
       "interface": {
         "displayName": "OpenStory",
-        "shortDescription": "Scripts in, multi-scene AI video out",
-        "longDescription": "OpenStory turns a script into a multi-scene video, mints a reusable library style from references, and shares a cut of stills, dialogue, music, and video. The plugin connects to the hosted MCP server at https://openstory.so/mcp and reads or writes only what the signed-in team can access. Sign-in is OAuth. On a machine with a shell, stitch plays local files. Without one, openstory.create_stitch publishes a page from URLs or small inline files.",
+        "shortDescription": "AI films, episodes, and micro-dramas",
+        "longDescription": "OpenStory turns a script into an entire film, episode, or micro-drama, with scenes, dialogue, and music. It also generates single images and video clips directly from a prompt, reference images, or start and end frames, mints a reusable library style from references, and shares a cut of stills, dialogue, music, and video. The plugin connects to the hosted MCP server at https://openstory.so/mcp and reads or writes only what the signed-in team can access. Sign-in is OAuth. On a machine with a shell, stitch plays local files. Without one, openstory.create_stitch publishes a page from URLs or small inline files.",
         "developerName": "OpenStory",
         "category": "Creativity",
-        "capabilities": ["Create a sequence", "Read your library"],
+        "capabilities": ["Generate films and episodes", "Generate images and video", "Read your library"],
         "websiteURL": "https://openstory.so",
         "supportURL": "https://github.com/openstory-so/skills/issues",
         "privacyPolicyURL": "https://openstory.so/privacy",
         "termsOfServiceURL": "https://openstory.so/terms",
         "defaultPrompt": [
-          "Turn this script into an OpenStory sequence",
-          "Mint an OpenStory style from these references",
-          "Which OpenStory team am I signed in as?"
+          "Generate a 5-second OpenStory video from this image",
+          "Turn this script into an OpenStory micro-drama",
+          "Mint an OpenStory style from these references"
         ],
         "brandColor": "#2A1840",
         "brandColorDark": "#FDB99B",
         "composerIcon": "./assets/icon.png",
         "composerIconDark": "./assets/icon.png",
         "logo": "./assets/logo.png",
-        "logoDark": "./assets/logo.png"
+        "logoDark": "./assets/logo.png",
+        "screenshots": ["./assets/screenshot-sequence.webp", "./assets/screenshot-scenes.webp", "./assets/screenshot-styles.webp"]
       },
       "review": {
         "test_cases": {
@@ -90,7 +91,7 @@
         "commerce_description": "This plugin does not sell products or process payments."
       },
       "publication": {
-        "release_notes": "1.3.0 lists OpenStory in the agent directories. ChatGPT, Codex, Claude, Grok, and Gemini get create-style, create-sequence, setup, and stitch. On the web, stitch calls openstory.create_stitch. On a machine with the files, it runs the stitch command."
+        "release_notes": "1.3.1 adds listing screenshots and describes what OpenStory makes: entire films, episodes, and micro-dramas from a script, plus single images and video clips generated directly from a prompt, references, or start and end frames."
       }
     }
   }
