@@ -23,7 +23,8 @@ jobs:
           if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
             echo "$tag already exists; nothing to do"; exit 0
           fi
-          jq -r '.extensions["com.openai"].publication.release_notes' plugin.json > "$RUNNER_TEMP/notes.md"
+          jq -er '.extensions["com.openai"].publication.release_notes | select(. != "")' plugin.json > "$RUNNER_TEMP/notes.md" \
+            || { echo "::error::publication.release_notes is missing from plugin.json (see AGENTS.md)."; exit 1; }
           # The ChatGPT directory takes this zip as a manual upload at platform.openai.com/plugins.
           zip -qr "$RUNNER_TEMP/openstory-$tag.zip" . -x '.git/*' '.github/*' '.agents/*'
           gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes-file "$RUNNER_TEMP/notes.md" "$RUNNER_TEMP/openstory-$tag.zip"
