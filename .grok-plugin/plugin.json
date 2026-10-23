@@ -1,6 +1,6 @@
 {
   "name": "openstory",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Mint a library style from refs (create-style), turn a script into a multi-scene AI video (create-sequence), play a cut from clips, stills, and a music bed (stitch), and connect the OpenStory MCP server.",
   "author": {
     "name": "OpenStory",
