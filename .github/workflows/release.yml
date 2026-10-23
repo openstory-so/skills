@@ -21,5 +21,7 @@ jobs:
             echo "$tag already exists; nothing to do"; exit 0
           fi
           jq -r '.extensions["com.openai"].publication.release_notes' plugin.json > "$RUNNER_TEMP/notes.md"
-          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes-file "$RUNNER_TEMP/notes.md"
+          # The ChatGPT directory takes this zip as a manual upload at platform.openai.com/plugins.
+          zip -qr "$RUNNER_TEMP/openstory-$tag.zip" . -x '.git/*' '.github/*' '.agents/*'
+          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes-file "$RUNNER_TEMP/notes.md" "$RUNNER_TEMP/openstory-$tag.zip"
           echo "Released $tag"
