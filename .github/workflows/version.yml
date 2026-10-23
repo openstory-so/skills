@@ -1,0 +1,28 @@
+name: Version bump
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Manifests agree and the version is bumped
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          files="plugin.json .codex-plugin/plugin.json .claude-plugin/plugin.json .grok-plugin/plugin.json gemini-extension.json"
+          versions=$(for f in $files; do jq -r .version "$f"; done | sort -u)
+          if [ "$(echo "$versions" | wc -l)" -ne 1 ]; then
+            echo "::error::Manifests disagree on version:"; for f in $files; do echo "  $f $(jq -r .version "$f")"; done; exit 1
+          fi
+          old=$(git show "$BASE:plugin.json" | jq -r .version)
+          new=$versions
+          if [ "$new" = "$old" ] || [ "$(printf '%s\n%s\n' "$old" "$new" | sort -V | tail -1)" != "$new" ]; then
+            echo "::error::Version $new must be higher than main's $old. Bump all five manifests (see AGENTS.md)."; exit 1
+          fi
+          echo "Version $old -> $new"
