@@ -4,13 +4,18 @@ on:
   pull_request:
     branches: [main]
 
+permissions: {}
+
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # compare manifests against the base commit
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Manifests agree and the version is bumped
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
