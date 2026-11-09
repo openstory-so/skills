@@ -24,7 +24,9 @@ client asks. That grant is separate from an API key.
 | Grok | The xAI plugin marketplace, or the commands below. |
 | Gemini CLI | `gemini extensions install https://github.com/openstory-so/skills` after the repo is tagged and carries the `gemini-cli-extension` topic. |
 
-`stitch` ships with the other skills. When the files are on disk and a shell is available, it runs `npx @openstory/stitch@latest`. With no shell, or when the files are only links, it calls `openstory.create_stitch` and returns a page anyone can open.
+`stitch` ships with the other skills. When the files are on disk and a shell is available, it runs `npx @openstory/stitch@latest`. With no shell, or when the files are only links, it calls `openstory_create_stitch` and returns a page anyone can open.
+
+The [OpenStory CLI](https://www.npmjs.com/package/@openstory/cli) (`npx @openstory/cli@latest`) signs in, pulls a sequence's files to disk, and shares a cut as a link. The skills reuse the key it saves in `~/.openstory/credentials.json`.
 
 ## Command-line installs
 
