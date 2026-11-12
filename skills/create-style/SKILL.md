@@ -69,12 +69,12 @@ always `{ "error": { "code", "message", "details"? } }`.
 
 Collect every ref before drafting. Accept mixed input:
 
-| Input | Scan |
-| --- | --- |
-| Image (file or URL) | Read it with vision. |
+| Input               | Scan                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Image (file or URL) | Read it with vision.                                                                                                                                    |
 | Video (file or URL) | Download if needed. Pull 3–5 stills across the clip with `ffmpeg`, then Read each still. Also note camera move, cut pace, and energy from the timeline. |
-| Web page | Fetch or screenshot; treat visible art direction as refs. |
-| Text / brand notes | Hard constraints. They win when they conflict with a ref. |
+| Web page            | Fetch or screenshot; treat visible art direction as refs.                                                                                               |
+| Text / brand notes  | Hard constraints. They win when they conflict with a ref.                                                                                               |
 
 Video stills (need `ffmpeg` + `ffprobe`):
 
